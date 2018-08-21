@@ -1,13 +1,18 @@
 library(httr)
 
-get_ptx_data <- function(app_id, app_key, url){
+get_ptx_data <- function(app_id, app_key, url, Windows = FALSE){
   # First save your current locale
   loc <- Sys.getlocale("LC_TIME")
-  Sys.setlocale("LC_TIME", "en_US.UTF8")
+  
+  if (Windows){
+    Sys.setlocale(category = "LC_TIME", locale = "English_United States.1252")
+  } else {
+    Sys.setlocale("LC_TIME", "en_US.UTF8")
+  }
   
   # "Tue, 21 Aug 2018 01:18:42 GMT"
   xdate <- format(as.POSIXlt(Sys.time(), tz = "GMT"), "%a, %d %b %Y %H:%M:%S GMT")
-  sig <- httr::hmac_sha1(app_key, paste("x-date:", xdate)) 
+  sig <- hmac_sha1(app_key, paste("x-date:", xdate)) 
   
   # hmac username="APP ID", algorithm="hmac-sha1", headers="x-date", 
   # signature="Base64(HMAC-SHA1("x-date: " + x-date , APP Key))"
